@@ -1,0 +1,1 @@
+Hello word from writeFileSyncHello word from writeFileSync
