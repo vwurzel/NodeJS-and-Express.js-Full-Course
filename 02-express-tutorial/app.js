@@ -1,25 +1,40 @@
 const express = require('express')
-const morgan = require('morgan')
-
-// const logger = require('./logger')
-// const authorize = require('./authorize')
+let { people } = require('./data')
 
 const app = express()
-// app.use([logger, authorize])
-app.use(morgan('tiny'))
 
-app.get('/', (req, res) => {
-    res.send('Home')
+// Static assets
+app.use(express.static('./methods-public'))
+
+// Parse form data
+app.use(express.urlencoded({ extended: false }))
+
+// Parse JSON
+app.use(express.json())
+
+app.get('/api/people', (req, res) => {
+    res.json({success: true, data: people})
 })
-app.get('/about', (req, res) => {
-    res.send('About')
+app.post('/api/people', (req, res) => {
+    const { name } = req.body
+    if (!name) {
+        return res.status(400).json({ success: false, msg: 'please provide name value' })
+      }
+      res.status(201).json({ success: true, person: name })
+    })
+app.post('/login', (req, res) => {
+    const { name } = req.body
+    if(name) {
+        return res.send(`Welcome ${name}`)
+    }
+    res.send('Please return and enter your name')
 })
-app.get('/api/products', (req, res) => {
-    res.send('Products')
-})
-app.get('/api/items', (req, res) => {
-    console.log(req.user)
-    res.send('Items')
+app.post('/api/insomnia/people', (req, res) => {
+    const { name } = req.body
+    if(name) {
+        return res.send([...people, name])
+    }
+    res.send('Please return and enter your name')
 })
 
 
